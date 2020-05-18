@@ -22,7 +22,7 @@ services:
   web:
     image: cimitra/web:latest
     ports:
-      - 80:80
+      - 81:80
       - 444:443
     restart: always
     environment:
