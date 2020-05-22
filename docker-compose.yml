@@ -1,0 +1,44 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mongo
+    ports:
+      - 27017:27017
+    restart: always
+    volumes:
+      - mongodata:/data/db
+
+  cimitra:
+    image: cimitra/server:rc
+    restart: always
+    environment:
+      APPIT_DB_URL: mongodb://db/cimitra_prod
+    depends_on:
+      - db
+
+
+  web:
+    image: cimitra/web:rc
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    environment:
+      CIMITRA_API_URL: http://cimitra:5007
+      CIMITRA_TITLE: inetra.de
+    depends_on:
+      - cimitra
+    volumes:
+      #- ./my_cert.crt:/etc/ssl/certs/server.crt
+      #- ./my_key.key:/etc/ssl/private/server.key
+      # 
+      # For re-branding
+      # 
+      - ./branding/icons/inetra.png:/var/www/html/branding/icons/logo.png
+      - ./branding/icons/inetra.svg:/var/www/html/branding/icons/logo.svg
+      - ./branding/inetra.png:/var/www/html/branding/logo_full.png
+      - ./branding/inetra.svg:/var/www/html/branding/logo_full.svg
+volumes:
+  mongodata:
